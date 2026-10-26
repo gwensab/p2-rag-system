@@ -25,26 +25,73 @@ The minimum detectable difference is the smallest gap this many queries could re
 
 For each of `dense`, `hybrid` and `rerank`, one or two sentences: the embedding model, how documents were chunked, what was fused and how, how many candidates the reranker saw, and anything you changed from the 12 and 13 lab code.
 
-TODO: describe your three systems.
+dense - Dense embeds with the bge-small model and ranks chunks by cosine similarity to the query vector, looking at chunks rather than whole articles as in lab 12, and splits each document into chunks of 300 words with 50 overlap. Most sections fit in one chunk, and a document scores as its best chunk.
+
+hybrid - Hybrid fuses bm25 and dense by reciprocal rank fusion over their full document ranking. The initial k value of 60 had poor performance, scoring 0.471 but reducing that k value to 5 improved it to 0.599 on practice queries.
+
+rerank - Rerank uses the Sonnet model, cuts passages to 600 characters and a bad reply keeps the first stage order. The changes from lab 13 include the schema bounds and the first stage which is hybrid's top 20.
+
+---
 
 ### Practice queries (20)
 
 Scores per system.
 
 <!-- p2:begin shared-practice -->
-_No scored runs here yet: run `uv run p2 run --corpus shared --queries practice --system bm25` (or `--all`), then `uv run p2 score`._
+| System | Recall@10 | MRR@10 | nDCG@10 |
+| --- | ---: | ---: | ---: |
+| bm25 | 0.625 | 0.507 | 0.518 |
+| dense | 0.558 | 0.562 | 0.480 |
+| hybrid | 0.817 | 0.599 | 0.594 |
+| rerank | 0.833 | 0.900 | 0.850 |
+
+20 judged queries; nDCG uses binary labels; a random ranking of the 2,484 documents would get recall@10 near 0.004.
 <!-- p2:end shared-practice -->
 
 The same scores per query class.
 
 <!-- p2:begin shared-practice-classes -->
-_No scored runs here yet: run `uv run p2 run --corpus shared --queries practice --system bm25` (or `--all`), then `uv run p2 score`._
+| System | Metric | identifier (n=7) | paraphrase (n=7) | mixed (n=6) |
+| --- | --- | ---: | ---: | ---: |
+| bm25 | Recall@10 | 1.000 | 0.000 | 0.917 |
+| bm25 | MRR@10 | 0.810 | 0.000 | 0.746 |
+| bm25 | nDCG@10 | 0.857 | 0.000 | 0.728 |
+| dense | Recall@10 | 0.214 | 0.595 | 0.917 |
+| dense | MRR@10 | 0.333 | 0.714 | 0.653 |
+| dense | nDCG@10 | 0.211 | 0.593 | 0.661 |
+| hybrid | Recall@10 | 1.000 | 0.548 | 0.917 |
+| hybrid | MRR@10 | 0.581 | 0.476 | 0.764 |
+| hybrid | nDCG@10 | 0.623 | 0.426 | 0.757 |
+| rerank | Recall@10 | 1.000 | 0.595 | 0.917 |
+| rerank | MRR@10 | 1.000 | 0.714 | 1.000 |
+| rerank | nDCG@10 | 1.000 | 0.626 | 0.936 |
 <!-- p2:end shared-practice-classes -->
 
 Differences between every pair of systems, each with its paired interval and the minimum detectable difference.
 
 <!-- p2:begin shared-practice-pairs -->
-_No scored runs here yet: run `uv run p2 run --corpus shared --queries practice --system bm25` (or `--all`), then `uv run p2 score`._
+| Comparison | Metric | Mean difference | 95% interval | MDD | Reading |
+| --- | --- | ---: | ---: | ---: | --- |
+| dense minus bm25 | Recall@10 | -0.067 | [-0.350, +0.225] | 0.415 | not distinguishable |
+| dense minus bm25 | MRR@10 | +0.055 | [-0.225, +0.343] | 0.412 | not distinguishable |
+| dense minus bm25 | nDCG@10 | -0.039 | [-0.302, +0.231] | 0.385 | not distinguishable |
+| hybrid minus bm25 | Recall@10 | +0.192 | [+0.050, +0.358] | 0.223 | hybrid higher |
+| hybrid minus bm25 | MRR@10 | +0.092 | [-0.085, +0.277] | 0.265 | not distinguishable |
+| hybrid minus bm25 | nDCG@10 | +0.076 | [-0.074, +0.236] | 0.226 | not distinguishable |
+| hybrid minus dense | Recall@10 | +0.258 | [+0.083, +0.450] | 0.270 | hybrid higher |
+| hybrid minus dense | MRR@10 | +0.037 | [-0.113, +0.187] | 0.217 | not distinguishable |
+| hybrid minus dense | nDCG@10 | +0.115 | [-0.015, +0.249] | 0.191 | not distinguishable |
+| rerank minus bm25 | Recall@10 | +0.208 | [+0.050, +0.383] | 0.242 | rerank higher |
+| rerank minus bm25 | MRR@10 | +0.393 | [+0.200, +0.595] | 0.287 | rerank higher |
+| rerank minus bm25 | nDCG@10 | +0.331 | [+0.167, +0.506] | 0.248 | rerank higher |
+| rerank minus dense | Recall@10 | +0.275 | [+0.100, +0.450] | 0.259 | rerank higher |
+| rerank minus dense | MRR@10 | +0.338 | [+0.150, +0.533] | 0.273 | rerank higher |
+| rerank minus dense | nDCG@10 | +0.370 | [+0.205, +0.544] | 0.246 | rerank higher |
+| rerank minus hybrid | Recall@10 | +0.017 | [+0.000, +0.050] | 0.047 | not distinguishable |
+| rerank minus hybrid | MRR@10 | +0.301 | [+0.154, +0.457] | 0.221 | rerank higher |
+| rerank minus hybrid | nDCG@10 | +0.255 | [+0.155, +0.361] | 0.149 | rerank higher |
+
+The interval is a paired bootstrap (10,000 resamples of the queries); MDD is the smallest difference this many queries detect 80% of the time.
 <!-- p2:end shared-practice-pairs -->
 
 The 40 test queries have no answer key in this repo.
@@ -56,14 +103,16 @@ Which differences are distinguishable from zero and which are not?
 What is the minimum detectable difference at 20 queries, and what does that say about any gap smaller than it?
 Which claim from lecture 12 or 13 did your numbers support, and which did they leave open?
 
-TODO: write what the practice-query intervals let you claim.
+The practice-query intervals let us claim that rerank performs the best overall. Its MRR@10 interval compared to hybrid is +0.154 to +0.457, compared to dense +0.150 to +0.533, and compared to bm25 +0.200 to +0.595, which all exclude zero. hybrid against dense and bm25 is not distinguishable on MRR@10 because the intervals include zero, while in Recall@10 hybrid is higher than both of these. rerank against hybrid on Recall@10 though, is not distinguishable (+0.000 to +0.050). The 20 query minimum detectable difference is 0.22 to 0.29 for MRR@10, so smaller gaps would be invisible if they exist. This supports the claim that no retiever wins everywhere. bm25 wins identifiers but loses paraphrase (0.810 vs 0.000), while dense demonstrates the reverse (0.333 vs 0.714). This claim doesnt cover everything though, since these numbers are practice scores and hybrid's k and the reranker prompt were tuned on those queries. 
 
 ---
 
 ## 2. Stage 1 - cited answers on the 12 shared questions
 
 <!-- p2:begin answers -->
-_No answers files yet: run `uv run p2 answer --corpus shared --system NAME`, then `uv run p2 score`._
+| Label | System | Verified (in) | 95% interval | not_found (in) | Declined (out) | 95% interval | Quotes found |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| rerank | rerank | 8 of 8 (100%) | [0.676, 1.000] | 0 of 8 (0%) | 4 of 4 (100%) | [0.510, 1.000] | 13 of 13 |
 <!-- p2:end answers -->
 
 Which system answered, and why that one?
@@ -73,7 +122,15 @@ Then read three in-corpus answers that `uv run p2 verify` passed.
 For each one, open the cited chunk and say whether the quote really supports the claim next to it.
 The check proves a quote is a real piece of the chunk and cannot prove that it supports the claim, so this reading is the part only you can do.
 
-TODO: write your answer choices and your three-answer audit.
+
+The rerank system answered, since it scored the highest. I did not change anything in prompts/answer.txt so the verified share and declined share did not move. 
+
+For the question "Within how many minutes must a mine operator call MSHA after an accident that kills a miner?", the gold section id is cfr30-50.10 which is used for both claims of the answer. This chunk contains both quotes that support the claims.
+The claim "The operator must contact MSHA immediately, without delay and within 15 minutes, at the toll-free number once the operator knows or should know of an accident." quotes "The operator shall immediately contact MSHA at once without delay and within 15 minutes at the toll-free number, 1-800-746-1553, once the operator knows or should know that an accident has occurred involving:" which removes the actual phone number and changes some wording slightly for sentence flow. Then, "This notification requirement covers an accident involving a death of an individual at the mine." quotes "(a) A death of an individual at the mine;" which adds some words for context and clarity.
+
+For the question "How long must the self-rescue device given to each underground coal miner be able to protect that person?", the gold section ids are cfr30-75.1714 and cfr30-75.1714-1 which are both retrieved and the first is cited. This chunk contains the quote that supports the claim. The claim is "Each operator must make available to each miner going underground an approved self-rescue device adequate to protect that person for 1 hour or longer." comes from the quote "an approved self-rescue device or devices which is adequate to protect such person for 1 hour or longer." This removes the 'or devices' from the original yet maintains meaning.
+
+For the question "What is the permissible exposure level for noise at a mine, as an 8-hour average?", the gold section id is crf 30-62.101 which is retrieved and cited. This chunk contains the quote and supports the claim. The claim is "The permissible exposure level is an 8-hour time-weighted average of 90 dBA, equivalent to a 100% dose." from the quote "Permissible exposure level. A TWA8 of 90 dBA or equivalently a dose of 100% of that permitted by the standard, integrating all sound levels from 90 dBA to at least 140 dBA." This restrucures the quote and phrasing by removing unnecessary words without losing meaning and replaces TWA8 with its meaning.
 
 ---
 
@@ -214,7 +271,36 @@ _No judged answers yet (stretch option 2): `uv run p2 judge answers/shared/LABEL
 The Claude calls, tokens and seconds in every trace you committed, and what a cheaper system or answers file saves against what it loses.
 
 <!-- p2:begin stretch-cost -->
-_No Claude traces yet: a run of a system that calls Claude, `p2 answer` and `p2 judge` write them in traces/, and then `uv run p2 score` fills this table._
+Every trace in traces/ that records a Claude call:
+
+| Trace | System | Spans | Claude calls | Saved | Input tokens | Output tokens | Seconds | Input per span | Output per span | Seconds per span |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| traces/answers-rerank.jsonl | rerank | 12 | 24 | 4 | 210,780 | 4,442 | 94.8 | 17,565 | 370 | 7.9 |
+| traces/shared-practice-rerank.jsonl | rerank | 20 | 20 | 2 | 227,379 | 2,513 | 77.6 | 11,369 | 126 | 3.9 |
+| traces/shared-test-rerank.jsonl | rerank | 40 | 40 | 0 | 453,460 | 4,492 | 156.7 | 11,336 | 112 | 3.9 |
+
+A span is one query of a run, one question of an answers file, or one claim of a judged file. A saved reply costs nothing now, so it counts the tokens and the seconds of the call that made it.
+
+Every pair of systems on the same queries where at least one calls Claude, the one with fewer Claude input tokens per query first:
+
+| Cheaper minus dearer | Queries | MRR@10 difference | 95% interval | Input tokens saved per query | Seconds saved per query | Reading |
+| --- | ---: | ---: | ---: | ---: | ---: | --- |
+| shared practice: bm25 minus rerank | 20 | -0.393 | [-0.595, -0.200] | 11,369 | 3.9 | rerank higher |
+| shared practice: dense minus rerank | 20 | -0.338 | [-0.533, -0.150] | 11,369 | 3.9 | rerank higher |
+| shared practice: hybrid minus rerank | 20 | -0.301 | [-0.457, -0.154] | 11,369 | 3.9 | rerank higher |
+
+The difference is the cheaper system's score minus the dearer one's, with its paired interval; the savings count Claude calls only, so a system that makes none saves all of the other's.
+
+Systems that do not call Claude, from traces/retrieval/ on the machine that last ran `p2 score` (git ignores that folder, so `p2 check` does not compare this part):
+
+| Trace | System | Queries | Seconds | Milliseconds per query |
+| --- | --- | ---: | ---: | ---: |
+| traces/retrieval/shared-practice-bm25.jsonl | bm25 | 20 | 0.04 | 1.9 |
+| traces/retrieval/shared-practice-dense.jsonl | dense | 20 | 0.23 | 11.7 |
+| traces/retrieval/shared-practice-hybrid.jsonl | hybrid | 20 | 0.33 | 16.7 |
+| traces/retrieval/shared-test-bm25.jsonl | bm25 | 40 | 0.08 | 2.1 |
+| traces/retrieval/shared-test-dense.jsonl | dense | 40 | 0.61 | 15.2 |
+| traces/retrieval/shared-test-hybrid.jsonl | hybrid | 40 | 0.48 | 12.1 |
 <!-- p2:end stretch-cost -->
 
 ### The grep agent (option 5)

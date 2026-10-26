@@ -24,6 +24,19 @@ tokenizer = "codes"
 k1 = 0.9
 b = 0.4
 
+[dense]
+# The embedding model for the dense system.
+model = "BAAI/bge-small-en-v1.5"
+
+[hybrid]
+# The constant in reciprocal rank fusion: a document scores 1 / (rrf_k + rank) in each ranking.
+rrf_k = 5
+
+[rerank]
+# How many hybrid candidates Claude reorders, and how many characters of each it sees.
+candidates = 20
+passage_chars = 600
+
 [answer]
 # How many chunks `p2 answer` sends to Claude with each question.
 top = 5

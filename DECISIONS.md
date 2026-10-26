@@ -41,9 +41,10 @@ If you rejected the alternative without measuring it, say why that was a fair ca
 "There was no alternative" is not an answer.
 Find the fork.
 
-TODO: your answer to prompt 2.
 
----
+While determining which approach to use for the embedding model, I had to choose between the 'bge-small' and 'potion' models. While potion is much faster (about 1 second), it becomes less effective when words aren't an exact match across documents and questions. Bge was the more logical choice despite its significantly longer run time (2.3 minutes) because it can match when different words with the same meaning may be used in questions and rules. I had claude run a quick comparison between the two on practice queries to see if bge would be the best choice and that data supported my decision. Paraphrase is where it really excels with bge scoring an MRR@10 of 0.714 and potion scoring only 0.300. By not using potion, I gave up a much higher score on identifier queries, with potion scoring 0.571 and bge getting only 0.333. Ultimately the paired interval for the difference between them includes zero, so the sample data doesnt definatively prove that bge is the better choice. However, I picked it because of the paraphrase class, which 'bm25' cannot handle.
+
+--- 
 
 ## 3. Where you overruled the agent
 
@@ -57,7 +58,7 @@ What did you do instead?
 If it genuinely never happened, say so plainly, and then say what you would have had to check in order to notice.
 Being honest here costs you far less than a story you cannot defend when you record your video.
 
-TODO: your answer to prompt 3.
+When I built rerank, I set passage_chars to 600 initially to reduce the amount of input. However, claude made the suggestion to increase this value to 1500, since the sections are a lot longer than the lab's articles. This would significantly increase the amount of tokens a run would use and on test data did not reduce the quality at all. This cannot be ensured without doing it on the full test set, but seemed like a valid risk to take. I noticed this while reading through its proposed plan and did not agree with the reasoning. Overruling this reduced computation and input tokens without losing too much quality.
 
 ---
 
