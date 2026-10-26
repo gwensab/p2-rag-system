@@ -27,7 +27,7 @@ For each of `dense`, `hybrid` and `rerank`, one or two sentences: the embedding 
 
 dense - Dense embeds with the bge-small model and ranks chunks by cosine similarity to the query vector, looking at chunks rather than whole articles as in lab 12, and splits each document into chunks of 300 words with 50 overlap. Most sections fit in one chunk, and a document scores as its best chunk.
 
-hybrid - Hybrid fuses bm25 and dense by reciprocal rank fusion over their full document ranking. The initial k value of 60 had poor performance, scoring 0.471 but reducing that k value to 5 improved it to 0.599 on practice queries.
+hybrid - Hybrid fuses bm25 and dense by reciprocal rank fusion over their full document ranking. The initial k value of 60 had poor performance, scoring 0.471 but reducing that k value to 30 improved it to 0.599 on practice queries.
 
 rerank - Rerank uses the Sonnet model, cuts passages to 600 characters and a bad reply keeps the first stage order. The changes from lab 13 include the schema bounds and the first stage which is hybrid's top 20.
 

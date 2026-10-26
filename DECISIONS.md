@@ -26,7 +26,7 @@ Commit this answer before your first `uv run p2 score` on the own corpus.
 Git history then shows that the expectation came first, which is what lets it be wrong in a way that teaches you something.
 If you were surprised later, say so in prompt 4 or in EVAL.md; do not come back and rewrite this one.
 
-TODO: your answer to prompt 1.
+I decided to use a collection of robot perception papers from arXiv which combines two topics I am extremely interested in, robotics and computer vision. This would be useful to research topics in my current courses and also apply in actual field work. This field is becoming even more relevant as robotics continues to progress and become increasingly prevalent. Additionally claude is able to extract documents from arXiv somewhat easily and it will create a managable set of relatively short documents. I expect rerank to perform the best on this data, which will stay consistent with its performance on the CFR, similar to in stage 1 but possibly by a smaller margin since there might be less for the reranker to fix if relevant abstracts are found quickly. I also think dense will perform fairly well due to its success in paraphrasing. I think bm25 will perform the worst because it is good with queries that contain a method or dataset name, but doesnt do well with more vauge topical questions and scored 0.000 on paraphrase queries on the CFR.
 
 ---
 
@@ -41,8 +41,7 @@ If you rejected the alternative without measuring it, say why that was a fair ca
 "There was no alternative" is not an answer.
 Find the fork.
 
-
-While determining which approach to use for the embedding model, I had to choose between the 'bge-small' and 'potion' models. While potion is much faster (about 1 second), it becomes less effective when words aren't an exact match across documents and questions. Bge was the more logical choice despite its significantly longer run time (2.3 minutes) because it can match when different words with the same meaning may be used in questions and rules. I had claude run a quick comparison between the two on practice queries to see if bge would be the best choice and that data supported my decision. Paraphrase is where it really excels with bge scoring an MRR@10 of 0.714 and potion scoring only 0.300. By not using potion, I gave up a much higher score on identifier queries, with potion scoring 0.571 and bge getting only 0.333. Ultimately the paired interval for the difference between them includes zero, so the sample data doesnt definatively prove that bge is the better choice. However, I picked it because of the paraphrase class, which 'bm25' cannot handle.
+While determining which approach to use for the embedding model, I had to choose between the 'bge-small' and 'potion' models. While potion is much faster (under 1 second), it becomes less effective when words aren't an exact match across documents and questions. Bge was the more logical choice despite its significantly longer run time (2.3 minutes) because it can match when different words with the same meaning may be used in questions and rules. I had claude run a quick comparison between the two on practice queries to see if bge would be the best choice and that data supported my decision. Paraphrase is where it really excels with bge scoring an MRR@10 of 0.714 and potion scoring only 0.300. By not using potion, I gave up a much higher score on identifier queries, with potion scoring 0.571 and bge getting only 0.333. Ultimately the paired interval for the difference between them includes zero, so the sample data doesnt definatively prove that bge is the better choice. However, I picked it because of the paraphrase class, which 'bm25' cannot handle.
 
 --- 
 
