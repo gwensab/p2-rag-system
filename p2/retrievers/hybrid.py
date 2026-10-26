@@ -3,6 +3,10 @@
 Each document scores the sum of 1 / (k + rank) over the two full rankings (k = 60 by default, from
 [hybrid] in p2.toml). Fusing full rankings, not top-10 lists, lets a document that is 11th in both
 lists reach the fused top 10. The same fusion over chunk rankings gives search_chunks for `p2 answer`.
+
+k is 30 here because CI runs this system again on another machine, where near-tied dense scores can swap
+places; with a small k the fused score then moves by more than p2 check's tolerance. rerank builds this
+class with its own k (see [rerank] first_stage_k in p2.toml), because CI never runs rerank again.
 """
 
 from __future__ import annotations
@@ -23,8 +27,8 @@ def rrf(rankings, k: int = 60) -> list[tuple[str, float]]:
 
 
 class Hybrid:
-    def __init__(self, corpus, cfg):
-        self.k = int(cfg.table("hybrid").get("rrf_k", 60))
+    def __init__(self, corpus, cfg, k: int | None = None):
+        self.k = int(k if k is not None else cfg.table("hybrid").get("rrf_k", 60))
         self.bm25 = retrievers.build("bm25", corpus, cfg)
         self.dense = retrievers.build("dense", corpus, cfg)
         self.n_docs = len(corpus.docs)

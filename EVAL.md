@@ -42,7 +42,7 @@ Scores per system.
 | --- | ---: | ---: | ---: |
 | bm25 | 0.625 | 0.507 | 0.518 |
 | dense | 0.558 | 0.562 | 0.480 |
-| hybrid | 0.817 | 0.599 | 0.594 |
+| hybrid | 0.675 | 0.522 | 0.509 |
 | rerank | 0.833 | 0.900 | 0.850 |
 
 20 judged queries; nDCG uses binary labels; a random ranking of the 2,484 documents would get recall@10 near 0.004.
@@ -59,9 +59,9 @@ The same scores per query class.
 | dense | Recall@10 | 0.214 | 0.595 | 0.917 |
 | dense | MRR@10 | 0.333 | 0.714 | 0.653 |
 | dense | nDCG@10 | 0.211 | 0.593 | 0.661 |
-| hybrid | Recall@10 | 1.000 | 0.548 | 0.917 |
-| hybrid | MRR@10 | 0.581 | 0.476 | 0.764 |
-| hybrid | nDCG@10 | 0.623 | 0.426 | 0.757 |
+| hybrid | Recall@10 | 0.643 | 0.500 | 0.917 |
+| hybrid | MRR@10 | 0.520 | 0.292 | 0.792 |
+| hybrid | nDCG@10 | 0.456 | 0.331 | 0.779 |
 | rerank | Recall@10 | 1.000 | 0.595 | 0.917 |
 | rerank | MRR@10 | 1.000 | 0.714 | 1.000 |
 | rerank | nDCG@10 | 1.000 | 0.626 | 0.936 |
@@ -75,21 +75,21 @@ Differences between every pair of systems, each with its paired interval and the
 | dense minus bm25 | Recall@10 | -0.067 | [-0.350, +0.225] | 0.415 | not distinguishable |
 | dense minus bm25 | MRR@10 | +0.055 | [-0.225, +0.343] | 0.412 | not distinguishable |
 | dense minus bm25 | nDCG@10 | -0.039 | [-0.302, +0.231] | 0.385 | not distinguishable |
-| hybrid minus bm25 | Recall@10 | +0.192 | [+0.050, +0.358] | 0.223 | hybrid higher |
-| hybrid minus bm25 | MRR@10 | +0.092 | [-0.085, +0.277] | 0.265 | not distinguishable |
-| hybrid minus bm25 | nDCG@10 | +0.076 | [-0.074, +0.236] | 0.226 | not distinguishable |
-| hybrid minus dense | Recall@10 | +0.258 | [+0.083, +0.450] | 0.270 | hybrid higher |
-| hybrid minus dense | MRR@10 | +0.037 | [-0.113, +0.187] | 0.217 | not distinguishable |
-| hybrid minus dense | nDCG@10 | +0.115 | [-0.015, +0.249] | 0.191 | not distinguishable |
+| hybrid minus bm25 | Recall@10 | +0.050 | [-0.175, +0.267] | 0.322 | not distinguishable |
+| hybrid minus bm25 | MRR@10 | +0.015 | [-0.153, +0.179] | 0.240 | not distinguishable |
+| hybrid minus bm25 | nDCG@10 | -0.009 | [-0.188, +0.168] | 0.258 | not distinguishable |
+| hybrid minus dense | Recall@10 | +0.117 | [-0.033, +0.275] | 0.235 | not distinguishable |
+| hybrid minus dense | MRR@10 | -0.041 | [-0.233, +0.140] | 0.271 | not distinguishable |
+| hybrid minus dense | nDCG@10 | +0.030 | [-0.121, +0.172] | 0.212 | not distinguishable |
 | rerank minus bm25 | Recall@10 | +0.208 | [+0.050, +0.383] | 0.242 | rerank higher |
 | rerank minus bm25 | MRR@10 | +0.393 | [+0.200, +0.595] | 0.287 | rerank higher |
 | rerank minus bm25 | nDCG@10 | +0.331 | [+0.167, +0.506] | 0.248 | rerank higher |
 | rerank minus dense | Recall@10 | +0.275 | [+0.100, +0.450] | 0.259 | rerank higher |
 | rerank minus dense | MRR@10 | +0.338 | [+0.150, +0.533] | 0.273 | rerank higher |
 | rerank minus dense | nDCG@10 | +0.370 | [+0.205, +0.544] | 0.246 | rerank higher |
-| rerank minus hybrid | Recall@10 | +0.017 | [+0.000, +0.050] | 0.047 | not distinguishable |
-| rerank minus hybrid | MRR@10 | +0.301 | [+0.154, +0.457] | 0.221 | rerank higher |
-| rerank minus hybrid | nDCG@10 | +0.255 | [+0.155, +0.361] | 0.149 | rerank higher |
+| rerank minus hybrid | Recall@10 | +0.158 | [+0.025, +0.317] | 0.213 | rerank higher |
+| rerank minus hybrid | MRR@10 | +0.378 | [+0.206, +0.560] | 0.257 | rerank higher |
+| rerank minus hybrid | nDCG@10 | +0.340 | [+0.200, +0.494] | 0.213 | rerank higher |
 
 The interval is a paired bootstrap (10,000 resamples of the queries); MDD is the smallest difference this many queries detect 80% of the time.
 <!-- p2:end shared-practice-pairs -->
@@ -287,7 +287,7 @@ Every pair of systems on the same queries where at least one calls Claude, the o
 | --- | ---: | ---: | ---: | ---: | ---: | --- |
 | shared practice: bm25 minus rerank | 20 | -0.393 | [-0.595, -0.200] | 11,369 | 3.9 | rerank higher |
 | shared practice: dense minus rerank | 20 | -0.338 | [-0.533, -0.150] | 11,369 | 3.9 | rerank higher |
-| shared practice: hybrid minus rerank | 20 | -0.301 | [-0.457, -0.154] | 11,369 | 3.9 | rerank higher |
+| shared practice: hybrid minus rerank | 20 | -0.378 | [-0.560, -0.206] | 11,369 | 3.9 | rerank higher |
 
 The difference is the cheaper system's score minus the dearer one's, with its paired interval; the savings count Claude calls only, so a system that makes none saves all of the other's.
 
@@ -295,12 +295,12 @@ Systems that do not call Claude, from traces/retrieval/ on the machine that last
 
 | Trace | System | Queries | Seconds | Milliseconds per query |
 | --- | --- | ---: | ---: | ---: |
-| traces/retrieval/shared-practice-bm25.jsonl | bm25 | 20 | 0.04 | 1.9 |
-| traces/retrieval/shared-practice-dense.jsonl | dense | 20 | 0.23 | 11.7 |
-| traces/retrieval/shared-practice-hybrid.jsonl | hybrid | 20 | 0.33 | 16.7 |
-| traces/retrieval/shared-test-bm25.jsonl | bm25 | 40 | 0.08 | 2.1 |
-| traces/retrieval/shared-test-dense.jsonl | dense | 40 | 0.61 | 15.2 |
-| traces/retrieval/shared-test-hybrid.jsonl | hybrid | 40 | 0.48 | 12.1 |
+| traces/retrieval/shared-practice-bm25.jsonl | bm25 | 20 | 0.04 | 2.0 |
+| traces/retrieval/shared-practice-dense.jsonl | dense | 20 | 0.28 | 14.1 |
+| traces/retrieval/shared-practice-hybrid.jsonl | hybrid | 20 | 0.25 | 12.7 |
+| traces/retrieval/shared-test-bm25.jsonl | bm25 | 40 | 0.09 | 2.3 |
+| traces/retrieval/shared-test-dense.jsonl | dense | 40 | 0.39 | 9.7 |
+| traces/retrieval/shared-test-hybrid.jsonl | hybrid | 40 | 0.50 | 12.5 |
 <!-- p2:end stretch-cost -->
 
 ### The grep agent (option 5)

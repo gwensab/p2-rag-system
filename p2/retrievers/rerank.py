@@ -1,6 +1,7 @@
 """rerank: Claude reorders hybrid's top candidates, one claude -p call per query.
 
-hybrid gives the first-stage top `candidates` (20 by default, [rerank] in p2.toml). They go to Claude
+The first stage is bm25 and dense fused by reciprocal rank fusion with [rerank] first_stage_k (hybrid's fusion,
+but with its own k); its top `candidates` (20 by default) are the candidates. They go to Claude
 as numbered passages, each cut to `passage_chars` characters, and the reply is forced into
 {"order": [n numbers]} by a JSON schema whose items must lie between 1 and n. A reply that is not each
 number once, or a failed call, keeps the first-stage order for that query. The documents below the
@@ -13,7 +14,8 @@ from __future__ import annotations
 
 import sys
 
-from p2 import claude, retrievers
+from p2 import claude
+from p2.retrievers.hybrid import Hybrid
 
 NEEDS_CLAUDE = True
 
@@ -42,7 +44,7 @@ class Rerank:
         self.cfg = cfg
         self.candidates = int(settings.get("candidates", 20))
         self.passage_chars = int(settings.get("passage_chars", 1500))
-        self.first_stage = retrievers.build("hybrid", corpus, cfg)
+        self.first_stage = Hybrid(corpus, cfg, k=int(settings.get("first_stage_k", 5)))
         self.docs = corpus.docs
         self.chunk_text = corpus.chunk_texts(cfg.chunk_words, cfg.chunk_overlap)
         self.cache = claude.cache_folder(cfg)

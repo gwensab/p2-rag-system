@@ -30,10 +30,15 @@ model = "BAAI/bge-small-en-v1.5"
 
 [hybrid]
 # The constant in reciprocal rank fusion: a document scores 1 / (rrf_k + rank) in each ranking.
-rrf_k = 5
+# 30, not the 5 that scored best on the practice queries: with k = 5 a swap of two near-tied dense scores on
+# another machine changes a fused score by more than p2 check's tolerance, and CI failed on it.
+rrf_k = 30
 
 [rerank]
-# How many hybrid candidates Claude reorders, and how many characters of each it sees.
+# The k of the reciprocal rank fusion that makes the candidates (the same fusion as hybrid). CI never
+# regenerates rerank, so the small k that scored best on the practice queries is safe here.
+first_stage_k = 5
+# How many candidates Claude reorders, and how many characters of each it sees.
 candidates = 20
 passage_chars = 600
 
