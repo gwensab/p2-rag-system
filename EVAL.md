@@ -174,6 +174,7 @@ Scores per system on your gold set.
 | dense | 0.883 | 0.751 | 0.780 |
 | hybrid | 0.950 | 0.844 | 0.869 |
 | rerank | 0.950 | 0.719 | 0.763 |
+| ablation/dense_prefix | 0.850 | 0.746 | 0.768 |
 | ablation/rerank_p1500 | 0.917 | 0.793 | 0.813 |
 
 30 judged queries; nDCG uses binary labels; a random ranking of the 498 documents would get recall@10 near 0.020.
@@ -196,6 +197,9 @@ The same scores per query class.
 | rerank | Recall@10 | 0.900 | 0.955 | 1.000 |
 | rerank | MRR@10 | 0.900 | 0.513 | 0.769 |
 | rerank | nDCG@10 | 0.900 | 0.588 | 0.824 |
+| ablation/dense_prefix | Recall@10 | 0.900 | 0.773 | 0.889 |
+| ablation/dense_prefix | MRR@10 | 0.850 | 0.606 | 0.800 |
+| ablation/dense_prefix | nDCG@10 | 0.863 | 0.638 | 0.821 |
 | ablation/rerank_p1500 | Recall@10 | 1.000 | 0.773 | 1.000 |
 | ablation/rerank_p1500 | MRR@10 | 1.000 | 0.616 | 0.778 |
 | ablation/rerank_p1500 | nDCG@10 | 1.000 | 0.627 | 0.832 |
@@ -219,6 +223,9 @@ Once both groups have queries, the table also says whether `bm25`'s lead over `d
 | rerank | Recall@10 | 0.917 | 0.972 | -0.056 | [-0.250, +0.083] | not distinguishable |
 | rerank | MRR@10 | 0.486 | 0.873 | -0.387 | [-0.639, -0.119] | claude higher |
 | rerank | nDCG@10 | 0.587 | 0.880 | -0.294 | [-0.509, -0.073] | claude higher |
+| ablation/dense_prefix | Recall@10 | 0.833 | 0.861 | -0.028 | [-0.306, +0.222] | not distinguishable |
+| ablation/dense_prefix | MRR@10 | 0.711 | 0.769 | -0.057 | [-0.348, +0.231] | not distinguishable |
+| ablation/dense_prefix | nDCG@10 | 0.741 | 0.786 | -0.045 | [-0.321, +0.224] | not distinguishable |
 | ablation/rerank_p1500 | Recall@10 | 0.917 | 0.917 | +0.000 | [-0.222, +0.167] | not distinguishable |
 | ablation/rerank_p1500 | MRR@10 | 0.708 | 0.849 | -0.140 | [-0.404, +0.122] | not distinguishable |
 | ablation/rerank_p1500 | nDCG@10 | 0.760 | 0.848 | -0.089 | [-0.328, +0.141] | not distinguishable |
@@ -261,6 +268,18 @@ Differences between every pair of systems.
 | rerank minus hybrid | Recall@10 | +0.000 | [+0.000, +0.000] | - | identical on every query |
 | rerank minus hybrid | MRR@10 | -0.125 | [-0.267, +0.013] | 0.204 | not distinguishable |
 | rerank minus hybrid | nDCG@10 | -0.106 | [-0.210, -0.012] | 0.146 | hybrid higher |
+| ablation/dense_prefix minus bm25 | Recall@10 | -0.050 | [-0.217, +0.117] | 0.236 | not distinguishable |
+| ablation/dense_prefix minus bm25 | MRR@10 | -0.132 | [-0.304, +0.040] | 0.254 | not distinguishable |
+| ablation/dense_prefix minus bm25 | nDCG@10 | -0.115 | [-0.282, +0.051] | 0.243 | not distinguishable |
+| ablation/dense_prefix minus dense | Recall@10 | -0.033 | [-0.100, +0.000] | 0.093 | not distinguishable |
+| ablation/dense_prefix minus dense | MRR@10 | -0.006 | [-0.056, +0.044] | 0.071 | not distinguishable |
+| ablation/dense_prefix minus dense | nDCG@10 | -0.012 | [-0.055, +0.029] | 0.061 | not distinguishable |
+| ablation/dense_prefix minus hybrid | Recall@10 | -0.100 | [-0.233, +0.000] | 0.156 | not distinguishable |
+| ablation/dense_prefix minus hybrid | MRR@10 | -0.098 | [-0.227, +0.022] | 0.182 | not distinguishable |
+| ablation/dense_prefix minus hybrid | nDCG@10 | -0.101 | [-0.209, -0.002] | 0.151 | hybrid higher |
+| ablation/dense_prefix minus rerank | Recall@10 | -0.100 | [-0.233, +0.000] | 0.156 | not distinguishable |
+| ablation/dense_prefix minus rerank | MRR@10 | +0.027 | [-0.076, +0.141] | 0.159 | not distinguishable |
+| ablation/dense_prefix minus rerank | nDCG@10 | +0.005 | [-0.079, +0.097] | 0.128 | not distinguishable |
 | ablation/rerank_p1500 minus bm25 | Recall@10 | +0.017 | [-0.117, +0.150] | 0.196 | not distinguishable |
 | ablation/rerank_p1500 minus bm25 | MRR@10 | -0.085 | [-0.252, +0.083] | 0.241 | not distinguishable |
 | ablation/rerank_p1500 minus bm25 | nDCG@10 | -0.070 | [-0.220, +0.075] | 0.214 | not distinguishable |
@@ -273,6 +292,9 @@ Differences between every pair of systems.
 | ablation/rerank_p1500 minus rerank | Recall@10 | -0.033 | [-0.133, +0.067] | 0.164 | not distinguishable |
 | ablation/rerank_p1500 minus rerank | MRR@10 | +0.074 | [-0.009, +0.177] | 0.136 | not distinguishable |
 | ablation/rerank_p1500 minus rerank | nDCG@10 | +0.050 | [-0.028, +0.147] | 0.128 | not distinguishable |
+| ablation/rerank_p1500 minus ablation/dense_prefix | Recall@10 | +0.067 | [-0.067, +0.200] | 0.187 | not distinguishable |
+| ablation/rerank_p1500 minus ablation/dense_prefix | MRR@10 | +0.047 | [-0.046, +0.153] | 0.147 | not distinguishable |
+| ablation/rerank_p1500 minus ablation/dense_prefix | nDCG@10 | +0.045 | [-0.043, +0.142] | 0.136 | not distinguishable |
 
 The interval is a paired bootstrap (10,000 resamples of the queries); MDD is the smallest difference this many queries detect 80% of the time. Two systems that score the same on every query have no interval to speak of, so their MDD is shown as -.
 <!-- p2:end own-pairs -->
@@ -294,6 +316,18 @@ The run file for it lives in `runs/own/ablation/`.
 <!-- p2:begin own-ablation -->
 | Comparison | Metric | Mean difference | 95% interval | MDD | Reading |
 | --- | --- | ---: | ---: | ---: | --- |
+| ablation/dense_prefix minus bm25 | Recall@10 | -0.050 | [-0.217, +0.117] | 0.236 | not distinguishable |
+| ablation/dense_prefix minus bm25 | MRR@10 | -0.132 | [-0.304, +0.040] | 0.254 | not distinguishable |
+| ablation/dense_prefix minus bm25 | nDCG@10 | -0.115 | [-0.282, +0.051] | 0.243 | not distinguishable |
+| ablation/dense_prefix minus dense | Recall@10 | -0.033 | [-0.100, +0.000] | 0.093 | not distinguishable |
+| ablation/dense_prefix minus dense | MRR@10 | -0.006 | [-0.056, +0.044] | 0.071 | not distinguishable |
+| ablation/dense_prefix minus dense | nDCG@10 | -0.012 | [-0.055, +0.029] | 0.061 | not distinguishable |
+| ablation/dense_prefix minus hybrid | Recall@10 | -0.100 | [-0.233, +0.000] | 0.156 | not distinguishable |
+| ablation/dense_prefix minus hybrid | MRR@10 | -0.098 | [-0.227, +0.022] | 0.182 | not distinguishable |
+| ablation/dense_prefix minus hybrid | nDCG@10 | -0.101 | [-0.209, -0.002] | 0.151 | hybrid higher |
+| ablation/dense_prefix minus rerank | Recall@10 | -0.100 | [-0.233, +0.000] | 0.156 | not distinguishable |
+| ablation/dense_prefix minus rerank | MRR@10 | +0.027 | [-0.076, +0.141] | 0.159 | not distinguishable |
+| ablation/dense_prefix minus rerank | nDCG@10 | +0.005 | [-0.079, +0.097] | 0.128 | not distinguishable |
 | ablation/rerank_p1500 minus bm25 | Recall@10 | +0.017 | [-0.117, +0.150] | 0.196 | not distinguishable |
 | ablation/rerank_p1500 minus bm25 | MRR@10 | -0.085 | [-0.252, +0.083] | 0.241 | not distinguishable |
 | ablation/rerank_p1500 minus bm25 | nDCG@10 | -0.070 | [-0.220, +0.075] | 0.214 | not distinguishable |
@@ -314,6 +348,16 @@ The queries your ablation helped and hurt, against the system it varies, by reci
 `p2 score` finds that system from a line such as `BASE = "bm25"` in your variant's file, or else from its name: `bm25_lab` varies `bm25`.
 
 <!-- p2:begin own-ablation-queries -->
+ablation/dense_prefix against dense (BASE = "dense" in p2/retrievers/dense_prefix.py): it helped 2 queries, hurt 3 and left 25 unchanged.
+
+| Query | Class | Origin | dense RR | ablation/dense_prefix RR | Change | Effect |
+| --- | --- | --- | ---: | ---: | ---: | --- |
+| h07 | paraphrase | hand | 0.500 | 1.000 | +0.500 | helped |
+| h10 | paraphrase | hand | 0.200 | 0.333 | +0.133 | helped |
+| c07 | paraphrase | claude | 1.000 | 0.500 | -0.500 | hurt |
+| c09 | paraphrase | claude | 0.500 | 0.333 | -0.167 | hurt |
+| h06 | mixed | hand | 0.143 | 0.000 | -0.143 | hurt |
+
 ablation/rerank_p1500 against rerank (BASE = "rerank" in p2/retrievers/rerank_p1500.py): it helped 5 queries, hurt 3 and left 22 unchanged.
 
 | Query | Class | Origin | rerank RR | ablation/rerank_p1500 RR | Change | Effect |
@@ -383,8 +427,16 @@ Whichever option you chose, write these five things:
 For a second ablation, write its hypothesis here before you run it, and commit it, so your history shows that it came first.
 For the hand and claude queries, do the same with your prediction before you score.
 
-I selected option 4, a second ablation of a different kind. 
+1. I selected option 4, a second ablation of a different kind. 
 Hypothesis: I expect that adding BGE's retrieval instruction to the front of each query will raise dense MMR@10 scores on the paraphrase queries for my corpus, since the model was trained with that prefix on short queries searched against longer passages and paraphrase queries are the ones that share the fewest words with the abstracts that answer them.
+
+2. The BGE retrieval instruction was added in front of every query and nothing else was changed. This included editing and running the variant which wrote to p2/retrievers/dense_prefix.py (the variant) and runs/own/ablation/dense_prefix.trec (the run). This changed how the first-stage query is embedded.
+
+3. The tables are own-ablation and own-ablation-queries are in section 5 where rerank_p1500 appears. 
+
+4. The MRR@10 changed by -0.006 with an interval of [-0.056, +0.044]. This interval includes zero and the minimum detectable difference in 0.071. With 30 queries the prefix did not make a substatial difference in results. Therefore my hypothesis was not supported by the results. The paraphrase score is indistingushable from the previous, going from 0.609 to 0.606 We cannot claim though, that the prefix would never help. A bigger effect is rulled out but a smaller one is not. The four queries I read were h07, h10, c07, and c09. In each of these queries, the judged paper stayed in the top 10 and every move was only 1 or two places. Since my gold set only has one paper per query, a swap with an equally good paper is considered a loss which helps to explain the results. Since two queries went up and two went down, they essenstially cancel each other out and result in very little change.
+
+5. One thing I would do next would be to try again with a bigger gold set to allow a smaller effect to be detected on the MRR@10 score. Ideally the result that would show this worked would be an interval excluding zero to demonstrate an actual difference. The other good outcome would be an interval that narrows tightly around zero, like +-0.03 for example which would solidify that the prefix does nothing.
 
 ### Claim-level faithfulness check (option 2)
 
@@ -428,6 +480,7 @@ Systems that do not call Claude, from traces/retrieval/ on the machine that last
 
 | Trace | System | Queries | Seconds | Milliseconds per query |
 | --- | --- | ---: | ---: | ---: |
+| traces/retrieval/own-own-ablation-dense_prefix.jsonl | dense_prefix | 30 | 0.49 | 16.3 |
 | traces/retrieval/own-own-bm25.jsonl | bm25 | 30 | 0.03 | 0.9 |
 | traces/retrieval/own-own-dense.jsonl | dense | 30 | 0.25 | 8.3 |
 | traces/retrieval/own-own-hybrid.jsonl | hybrid | 30 | 0.36 | 11.9 |
