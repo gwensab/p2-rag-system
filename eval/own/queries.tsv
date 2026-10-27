@@ -2,3 +2,33 @@
 # origin is hand when you wrote the query yourself and claude when a model drafted it; at least 10 must be hand.
 # class is a word you choose, for example identifier, paraphrase or mixed as in the shared sets; scores are reported per class.
 # Lines that start with # are comments, so delete these lines or keep them, as you like.
+c01	identifier	Splatblox	claude
+c02	identifier	CarPlanner	claude
+c03	identifier	DSEC-SSC benchmark	claude
+c04	identifier	MixSeg3D Waymo Open Dataset Challenge	claude
+c05	identifier	BoRe-Depth	claude
+c06	identifier	ThermalGen	claude
+c07	paraphrase	How can a vehicle work out where it is inside a parking garage when satellite positioning does not work?	claude
+c08	paraphrase	Keeping a self-driving car's perception reliable when one sensor's readings arrive late	claude
+c09	paraphrase	Teaching a robot to tidy up objects from only a few examples and a spoken instruction	claude
+c10	paraphrase	Training a model on unlabeled laser scans when most of the space around the car is empty	claude
+c11	paraphrase	Quickly lining up the position and timing of a motion sensor and a camera	claude
+c12	paraphrase	Making a car detector trained on one dataset still work when the sensor setup changes	claude
+c13	mixed	LiDAR scene generation with control over where objects are placed	claude
+c14	mixed	diffusion model for grasp poses that depend on the task	claude
+c15	mixed	surgical robot policies learned from videos with a world model	claude
+c16	mixed	uncertainty-aware localization using RGB images and 2D LiDAR indoors	claude
+c17	mixed	9-DoF object pose estimation with a diffusion model	claude
+c18	mixed	benchmark for grounding language references in 3D indoor scenes with imperfect instructions	claude
+h01	identifier	Ranger	hand
+h02	identifier	SATA	hand
+h03	identifier	Evo-1	hand
+h04	mixed	How are world models being used?	hand
+h05	mixed	What is the standard process for robot mapping?	hand
+h06	mixed	How is computer vision being applied to medical fields?	hand
+h07	paraphrase	What are the challenges that we face with long horizon embodied planning?	hand
+h08	paraphrase	How do older models of VLN work?	hand
+h09	paraphrase	What functions are important to a table tennis robot's success?	hand
+h10	paraphrase	How can the safety of autonomous vehicles be improved?	hand
+h11	paraphrase	How can tactile sensor be improved?	hand
+h12	identifier	PCR-ORB	hand
