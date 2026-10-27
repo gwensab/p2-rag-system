@@ -174,6 +174,7 @@ Scores per system on your gold set.
 | dense | 0.883 | 0.751 | 0.780 |
 | hybrid | 0.967 | 0.848 | 0.877 |
 | rerank | 0.950 | 0.719 | 0.763 |
+| ablation/rerank_p1500 | 0.917 | 0.793 | 0.813 |
 
 30 judged queries; nDCG uses binary labels; a random ranking of the 498 documents would get recall@10 near 0.020.
 <!-- p2:end own -->
@@ -195,6 +196,9 @@ The same scores per query class.
 | rerank | Recall@10 | 0.900 | 0.955 | 1.000 |
 | rerank | MRR@10 | 0.900 | 0.513 | 0.769 |
 | rerank | nDCG@10 | 0.900 | 0.588 | 0.824 |
+| ablation/rerank_p1500 | Recall@10 | 1.000 | 0.773 | 1.000 |
+| ablation/rerank_p1500 | MRR@10 | 1.000 | 0.616 | 0.778 |
+| ablation/rerank_p1500 | nDCG@10 | 1.000 | 0.627 | 0.832 |
 <!-- p2:end own-classes -->
 
 The same scores for the queries you wrote yourself (`hand`) and the ones a model drafted (`claude`), with the difference between the two groups and its interval.
@@ -215,6 +219,9 @@ Once both groups have queries, the table also says whether `bm25`'s lead over `d
 | rerank | Recall@10 | 0.917 | 0.972 | -0.056 | [-0.250, +0.083] | not distinguishable |
 | rerank | MRR@10 | 0.486 | 0.873 | -0.387 | [-0.639, -0.119] | claude higher |
 | rerank | nDCG@10 | 0.587 | 0.880 | -0.294 | [-0.509, -0.073] | claude higher |
+| ablation/rerank_p1500 | Recall@10 | 0.917 | 0.917 | +0.000 | [-0.222, +0.167] | not distinguishable |
+| ablation/rerank_p1500 | MRR@10 | 0.708 | 0.849 | -0.140 | [-0.404, +0.122] | not distinguishable |
+| ablation/rerank_p1500 | nDCG@10 | 0.760 | 0.848 | -0.089 | [-0.328, +0.141] | not distinguishable |
 
 The hand and claude queries are different queries, so the interval of hand minus claude comes from resampling the queries within each group (10,000 times), not from pairing them.
 
@@ -254,6 +261,18 @@ Differences between every pair of systems.
 | rerank minus hybrid | Recall@10 | -0.017 | [-0.100, +0.050] | 0.106 | not distinguishable |
 | rerank minus hybrid | MRR@10 | -0.130 | [-0.274, +0.012] | 0.209 | not distinguishable |
 | rerank minus hybrid | nDCG@10 | -0.114 | [-0.221, -0.012] | 0.154 | hybrid higher |
+| ablation/rerank_p1500 minus bm25 | Recall@10 | +0.017 | [-0.117, +0.150] | 0.196 | not distinguishable |
+| ablation/rerank_p1500 minus bm25 | MRR@10 | -0.085 | [-0.252, +0.083] | 0.241 | not distinguishable |
+| ablation/rerank_p1500 minus bm25 | nDCG@10 | -0.070 | [-0.220, +0.075] | 0.214 | not distinguishable |
+| ablation/rerank_p1500 minus dense | Recall@10 | +0.033 | [-0.067, +0.133] | 0.164 | not distinguishable |
+| ablation/rerank_p1500 minus dense | MRR@10 | +0.041 | [-0.039, +0.139] | 0.130 | not distinguishable |
+| ablation/rerank_p1500 minus dense | nDCG@10 | +0.033 | [-0.040, +0.125] | 0.121 | not distinguishable |
+| ablation/rerank_p1500 minus hybrid | Recall@10 | -0.050 | [-0.167, +0.033] | 0.140 | not distinguishable |
+| ablation/rerank_p1500 minus hybrid | MRR@10 | -0.056 | [-0.206, +0.092] | 0.214 | not distinguishable |
+| ablation/rerank_p1500 minus hybrid | nDCG@10 | -0.064 | [-0.185, +0.049] | 0.170 | not distinguishable |
+| ablation/rerank_p1500 minus rerank | Recall@10 | -0.033 | [-0.133, +0.067] | 0.164 | not distinguishable |
+| ablation/rerank_p1500 minus rerank | MRR@10 | +0.074 | [-0.009, +0.177] | 0.136 | not distinguishable |
+| ablation/rerank_p1500 minus rerank | nDCG@10 | +0.050 | [-0.028, +0.147] | 0.128 | not distinguishable |
 
 The interval is a paired bootstrap (10,000 resamples of the queries); MDD is the smallest difference this many queries detect 80% of the time.
 <!-- p2:end own-pairs -->
@@ -273,14 +292,42 @@ Write your hypothesis here before you run it, in one sentence with a direction: 
 The run file for it lives in `runs/own/ablation/`.
 
 <!-- p2:begin own-ablation -->
-_No ablation runs yet: `uv run p2 run --corpus own --system NAME --ablation` writes one to runs/own/ablation/, then `uv run p2 score` fills this table._
+| Comparison | Metric | Mean difference | 95% interval | MDD | Reading |
+| --- | --- | ---: | ---: | ---: | --- |
+| ablation/rerank_p1500 minus bm25 | Recall@10 | +0.017 | [-0.117, +0.150] | 0.196 | not distinguishable |
+| ablation/rerank_p1500 minus bm25 | MRR@10 | -0.085 | [-0.252, +0.083] | 0.241 | not distinguishable |
+| ablation/rerank_p1500 minus bm25 | nDCG@10 | -0.070 | [-0.220, +0.075] | 0.214 | not distinguishable |
+| ablation/rerank_p1500 minus dense | Recall@10 | +0.033 | [-0.067, +0.133] | 0.164 | not distinguishable |
+| ablation/rerank_p1500 minus dense | MRR@10 | +0.041 | [-0.039, +0.139] | 0.130 | not distinguishable |
+| ablation/rerank_p1500 minus dense | nDCG@10 | +0.033 | [-0.040, +0.125] | 0.121 | not distinguishable |
+| ablation/rerank_p1500 minus hybrid | Recall@10 | -0.050 | [-0.167, +0.033] | 0.140 | not distinguishable |
+| ablation/rerank_p1500 minus hybrid | MRR@10 | -0.056 | [-0.206, +0.092] | 0.214 | not distinguishable |
+| ablation/rerank_p1500 minus hybrid | nDCG@10 | -0.064 | [-0.185, +0.049] | 0.170 | not distinguishable |
+| ablation/rerank_p1500 minus rerank | Recall@10 | -0.033 | [-0.133, +0.067] | 0.164 | not distinguishable |
+| ablation/rerank_p1500 minus rerank | MRR@10 | +0.074 | [-0.009, +0.177] | 0.136 | not distinguishable |
+| ablation/rerank_p1500 minus rerank | nDCG@10 | +0.050 | [-0.028, +0.147] | 0.128 | not distinguishable |
+
+The interval is a paired bootstrap (10,000 resamples of the queries); MDD is the smallest difference this many queries detect 80% of the time.
 <!-- p2:end own-ablation -->
 
 The queries your ablation helped and hurt, against the system it varies, by reciprocal rank.
 `p2 score` finds that system from a line such as `BASE = "bm25"` in your variant's file, or else from its name: `bm25_lab` varies `bm25`.
 
 <!-- p2:begin own-ablation-queries -->
-_No ablation runs yet: `uv run p2 run --corpus own --system NAME --ablation` writes one to runs/own/ablation/, then `uv run p2 score` fills this table._
+ablation/rerank_p1500 against rerank (BASE = "rerank" in p2/retrievers/rerank_p1500.py): it helped 5 queries, hurt 3 and left 22 unchanged.
+
+| Query | Class | Origin | rerank RR | ablation/rerank_p1500 RR | Change | Effect |
+| --- | --- | --- | ---: | ---: | ---: | --- |
+| h02 | identifier | hand | 0.000 | 1.000 | +1.000 | helped |
+| h08 | paraphrase | hand | 0.167 | 1.000 | +0.833 | helped |
+| h09 | paraphrase | hand | 0.500 | 1.000 | +0.500 | helped |
+| h07 | paraphrase | hand | 0.143 | 0.500 | +0.357 | helped |
+| h05 | mixed | hand | 0.250 | 0.333 | +0.083 | helped |
+| c09 | paraphrase | claude | 0.500 | 0.167 | -0.333 | hurt |
+| c12 | paraphrase | claude | 0.111 | 0.000 | -0.111 | hurt |
+| h10 | paraphrase | hand | 0.111 | 0.000 | -0.111 | hurt |
+
+RR is the reciprocal rank of the first relevant document in the top 10 (0 when none is there), the per-query value behind MRR@10; the queries at the top of each list are the ones to read.
 <!-- p2:end own-ablation-queries -->
 
 What did you change, what happened, and does the interval support the claim you want to make?
@@ -354,6 +401,7 @@ Every trace in traces/ that records a Claude call:
 | Trace | System | Spans | Claude calls | Saved | Input tokens | Output tokens | Seconds | Input per span | Output per span | Seconds per span |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | traces/answers-rerank.jsonl | rerank | 12 | 24 | 4 | 210,780 | 4,442 | 94.8 | 17,565 | 370 | 7.9 |
+| traces/own-own-ablation-rerank_p1500.jsonl | rerank_p1500 | 30 | 30 | 2 | 387,117 | 2,730 | 181.7 | 12,904 | 91 | 6.1 |
 | traces/own-own-rerank.jsonl | rerank | 30 | 30 | 18 | 289,572 | 2,730 | 140.2 | 9,652 | 91 | 4.7 |
 | traces/shared-practice-rerank.jsonl | rerank | 20 | 20 | 2 | 227,379 | 2,513 | 77.6 | 11,369 | 126 | 3.9 |
 | traces/shared-test-rerank.jsonl | rerank | 40 | 40 | 0 | 453,460 | 4,492 | 156.7 | 11,336 | 112 | 3.9 |
