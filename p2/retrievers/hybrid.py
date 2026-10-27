@@ -4,8 +4,8 @@ Each document scores the sum of 1 / (k + rank) over the two full rankings (k = 6
 [hybrid] in p2.toml). Fusing full rankings, not top-10 lists, lets a document that is 11th in both
 lists reach the fused top 10. The same fusion over chunk rankings gives search_chunks for `p2 answer`.
 
-k is 30 here because CI runs this system again on another machine, where near-tied dense scores can swap
-places; with a small k the fused score then moves by more than p2 check's tolerance. rerank builds this
+k is 60 here because CI runs this system again on another machine, where near-tied dense scores can swap
+places; with a smaller k (5 or 30) the fused score then moves by more than p2 check's tolerance. rerank builds this
 class with its own k (see [rerank] first_stage_k in p2.toml), because CI never runs rerank again.
 """
 

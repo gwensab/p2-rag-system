@@ -30,9 +30,10 @@ model = "BAAI/bge-small-en-v1.5"
 
 [hybrid]
 # The constant in reciprocal rank fusion: a document scores 1 / (rrf_k + rank) in each ranking.
-# 30, not the 5 that scored best on the practice queries: with k = 5 a swap of two near-tied dense scores on
-# another machine changes a fused score by more than p2 check's tolerance, and CI failed on it.
-rrf_k = 30
+# 60, not the 5 that scored best on the practice queries, and not 30: near-tied dense scores can swap places on
+# another machine, and with k = 5 or 30 the fused score then moved by more than p2 check's tolerance (0.001)
+# and CI failed on it. At 60 a shift of a few places stays inside the tolerance.
+rrf_k = 60
 
 [rerank]
 # The k of the reciprocal rank fusion that makes the candidates (the same fusion as hybrid). CI never
