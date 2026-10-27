@@ -383,6 +383,9 @@ Whichever option you chose, write these five things:
 For a second ablation, write its hypothesis here before you run it, and commit it, so your history shows that it came first.
 For the hand and claude queries, do the same with your prediction before you score.
 
+I selected option 4, a second ablation of a different kind. 
+Hypothesis: I expect that adding BGE's retrieval instruction to the front of each query will raise dense MMR@10 scores on the paraphrase queries for my corpus, since the model was trained with that prefix on short queries searched against longer passages and paraphrase queries are the ones that share the fewest words with the abstracts that answer them.
+
 ### Claim-level faithfulness check (option 2)
 
 Claude's verdicts from `p2 judge` against your own verdicts in the calibration file.
