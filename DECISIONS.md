@@ -57,7 +57,7 @@ What did you do instead?
 If it genuinely never happened, say so plainly, and then say what you would have had to check in order to notice.
 Being honest here costs you far less than a story you cannot defend when you record your video.
 
-When I built rerank, I set passage_chars to 600 initially to reduce the amount of input. However, claude made the suggestion to increase this value to 1500, since the sections are a lot longer than the lab's articles. This would significantly increase the amount of tokens a run would use and on test data did not reduce the quality at all. This cannot be ensured without doing it on the full test set, but seemed like a valid risk to take. I noticed this while reading through its proposed plan and did not agree with the reasoning. Overruling this reduced computation and input tokens without losing too much quality.
+When I built rerank, I decided to set passage_chars to 600 initially to reduce the amount of input. However, claude made the suggestion to increase this value to 1500, since the sections are a lot longer than the lab's articles. This would significantly increase the amount of tokens a run would use and on test data did not reduce the quality at all. This cannot be ensured without doing it on the full test set, but seemed like a valid risk to take. I noticed this while reading through its proposed plan and did not agree with the reasoning. Overruling this reduced computation and input tokens without losing too much quality. Later in the project I realized that 1500 words would actually worked significantly better for my own corpus so ended up going with claude's originally suggested answer.
 
 ---
 
@@ -69,7 +69,8 @@ It could be a mean over a small query class, a difference whose interval include
 What would have to be true for you to trust it?
 Did you do anything to test it, and what did that show?
 
-TODO: your answer to prompt 4.
+
+One number I dont trust in my EVAL.md is the rerank MMR@10 score on hand queries. This was 0.467 compared to 0.873 on claude queries. I dont trust this because my gold set only contained one document per query and some of my hand queries were pretty vauge and could have applied to multiple documents. In order to trust this value I would have to reevaluate my hand queries and write some that are more curated to do well with rerank. To test this I looked at where rerank ranked the gold document for h06, h08, and h10. It placed them at 6, 6, and 9 respectively which definetly contributed to the lower scores. In the future I would reevaluate the bias in these queries to see if the rerank score could be improved.
 
 ---
 
@@ -80,4 +81,5 @@ One thing in your system, your corpus or your gold set that is not right, not fi
 What would you do next, and how would you find out whether it matters?
 Name the file, the query or the document where someone could look.
 
-TODO: your answer to prompt 5.
+
+My gold set could use some improvement. I only added one document for each query which definitely influenced the results. In the future I would put more time into looking for documents for the gold set and ensuring that relevant documents are included. Having more documents for each query would make sense because a lot of the documents in this dataet discuss similar topics so many documents could answer the same question. However when I wrote some of the questions I had specific documents in mind for the gold set but then discovered that other documents also fit the same query.

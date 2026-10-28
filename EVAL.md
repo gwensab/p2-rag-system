@@ -27,9 +27,9 @@ For each of `dense`, `hybrid` and `rerank`, one or two sentences: the embedding 
 
 dense - Dense embeds with the bge-small model and ranks chunks by cosine similarity to the query vector, looking at chunks rather than whole articles as in lab 12, and splits each document into chunks of 300 words with 50 overlap. Most sections fit in one chunk, and a document scores as its best chunk.
 
-hybrid - Hybrid fuses bm25 and dense by reciprocal rank fusion over their full document ranking. The initial k value of 60 had poor performance, scoring 0.471 but reducing that k value to 30 improved it to 0.599 on practice queries.
+hybrid - Hybrid fuses bm25 and dense by reciprocal rank fusion over their full document ranking. The initial k value of 60 had poor performance of 0.471, yet lowering the k value to 5 improved score to 0.599 but resulted in the CI failing. Ultimately I am sticking to k=60 for hybrid.
 
-rerank - Rerank uses the Sonnet model, cuts passages to 600 characters and a bad reply keeps the first stage order. The changes from lab 13 include the schema bounds and the first stage which is hybrid's top 20.
+rerank - Rerank uses the Sonnet model, cuts passages to 600 characters and a bad reply keeps the first stage order. The changes from lab 13 include the schema bounds and the first stage which is bm25 and dense fused with reciprocal rank fusion at its own k of 5. Its top 20 candidates go to claude.
 
 ---
 
@@ -103,7 +103,7 @@ Which differences are distinguishable from zero and which are not?
 What is the minimum detectable difference at 20 queries, and what does that say about any gap smaller than it?
 Which claim from lecture 12 or 13 did your numbers support, and which did they leave open?
 
-The practice-query intervals let us claim that rerank performs the best overall. Its MRR@10 interval compared to hybrid is +0.154 to +0.457, compared to dense +0.150 to +0.533, and compared to bm25 +0.200 to +0.595, which all exclude zero. hybrid against dense and bm25 is not distinguishable on MRR@10 because the intervals include zero, while in Recall@10 hybrid is higher than both of these. rerank against hybrid on Recall@10 though, is not distinguishable (+0.000 to +0.050). The 20 query minimum detectable difference is 0.22 to 0.29 for MRR@10, so smaller gaps would be invisible if they exist. This supports the claim that no retiever wins everywhere. bm25 wins identifiers but loses paraphrase (0.810 vs 0.000), while dense demonstrates the reverse (0.333 vs 0.714). This claim doesnt cover everything though, since these numbers are practice scores and hybrid's k and the reranker prompt were tuned on those queries. 
+The practice-query intervals let us claim that rerank performs the best overall. Its MRR@10 interval compared to hybrid is +0.246 to +0.614, compared to dense +0.150 to +0.533, and compared to bm25 +0.200 to +0.595, which all exclude zero. hybrid against dense and bm25 is not distinguishable on MRR@10 because the intervals include zero, and in Recall@10 hybrid abainst dense and bm25 are both not distinguishable since the interval includes zero. rerank against hybrid on Recall@10 though, is distinguishably higher (+0.092 to +0.417). The 20 query minimum detectable difference is 0.19 to 0.41 for MRR@10, so smaller gaps would be invisible if they exist. This supports the claim that no retiever wins everywhere. bm25 wins identifiers but loses paraphrase (0.810 vs 0.000), while dense demonstrates the reverse (0.333 vs 0.714). This claim doesnt cover everything though, since these numbers are practice scores. 
 
 ---
 
@@ -159,7 +159,7 @@ I have 30 total queries, 12 with the origin hand and 18 with the origin claude. 
 
 Relevance rule: The abstract must give information that helps answer the question for paraphrase and mixed. Identifiers must be named explicitly in either the title or the abstract. For topic queries and paraphrase, the abstracts main contribution should include the query's subject, not just a mention.
 
-To find candidates come from the top 10 of the three systems, the keyword scan, and my own reading.  
+To find candidates come from the top 10 of the three systems, the keyword scan, and my own reading. I read most of the abstracts before labeling.
 
 ---
 
@@ -303,7 +303,11 @@ Which differences are distinguishable and which are not, at your gold-set size?
 Do the `hand` queries and the `claude` queries tell the same story?
 Did your prediction in `DECISIONS.md` prompt 1 hold?
 
-TODO: write what your own-corpus intervals let you claim.
+
+At my gold-set size, no pair of the four systems overall is distinguishable from another. The widest gaps are rerank minus bm25 at -0.159 [-0.332, +0.020] and rerank minus hybrid at -0.125 [-0.267, +0.013] which both include zero. The one pair that is distinguishable for one system is rerank minus hybrid on nDCG@10  which is -0.106 [-0.210, -0.012] with hybrid being higher. These two are identical on recall@10 for every query. 
+The minimum detectable difference for MRR@10 is between 0.128 (rerank vs dense) and 0.260 (rerank vs bm25). Although estimates point towards bm25 beating rerank, we cannot claim that because a gap smaller than the existing one is invisible for my gold-set size of 30. 
+For bm25, dense, and hybrid both hand and claude results are indistingushable. But rerank has a distingishable gap of -0.387 [-0.639, -0.119] with claude higher. Claude and hand written queries were indistinguishable when looking at if they favor keyword search,since the interval includes zero but leans towards hand queries having more. Content-word overlap is also similar (hand 0.76, claude 0.73) so that also doesnt explain the rerank gap. A likely contributer to claude queries scoring higher is that my hand queries included broader topical questions that could have been answered by many papers but only had one in the gold set.
+My prediction from the decisions prompt 1 did not hold. I expected rerank to perform best, dense to be fairly good and bm25 to be the worst. On MRR@10 and nDCG@10, bm25 is best, and rerank is the lowest with dense in third. On recall@10 rerank and hybrid are tied for best at 0.950, followed by bm25 and dense. This almost entirely opposes my initial prediction. This is likely due to the structure of my queries. My corpus had more overlap between queries and texts than the CFR for every class which largely explains why bm25 performed well. Rerank does not perform well because the reranker often selects the right paper in its top 5 on the first stage so the reranker just adds noise. 
 
 ---
 
@@ -378,9 +382,10 @@ What did you change, what happened, and does the interval support the claim you 
 If the result is not distinguishable, say what size of effect your gold set could have seen.
 Read the queries at the top of each list in the second table, and say whether your change explains them.
 
-TODO: write the ablation: the one change, the hypothesis, the result and the claim.
 
-I plan to change the character limit from 600 to 1500. I believe that this will increase the MRR@10 for rerank on my corpus because it will allow an entire abstract to fit in a chunk, rather than just the first part of one. This is supported by the fact that the rerank score is low on paraphrase queries because the important information is usually later in the abstract. The median abstract length is 1,400 characters so 1,500 should cover most of them.
+Hypothesis: I plan to change the character limit from 600 to 1500. I believe that this will increase the MRR@10 for rerank on my corpus because it will allow an entire abstract to fit in a chunk, rather than just the first part of one. This is supported by the fact that the rerank score is low on paraphrase queries because the important information is usually later in the abstract. The median abstract length is 1,400 characters so 1,500 should cover most of them.
+
+Results: The rerank MRR@10 score at 1,500 characters is 0.793 conpared to 0.719 at 600 characters. This is a difference of +0.074 with an interval of [-0.009, +0.177] which makes it undistinguishable. However, the direction still matches my hypothesis. The minimum detectable difference is 0.136 so the direction fits but the 30 queries cannot confirm it. nDCG@10 behaved simillarly while recall@10 slipped slightly. Claude generated a table demonstrating the scores on identifier, paraphrase, and mixed for each number of characters. Overall 1500 characters performed better on average. Paraphrase gained +0.103 which supports my earlier reasoning. The identifier class also rose by 0.100 which i did not anticipate. h02 underwent the biggest gain, (0.000 to 1.000) since the identifier "SATA" first appears at character 935. Additionally, h08 focuses on older VLN models which is mentioned at character 672 of the abstract. Both of these were helped by increasing the character limit. h10 and c09 were both hurt by this, since their original answers appeared at characters 354 and 1705. Rank dropped for both of these but cannot necessarily be explained by the locations of relevant info. From the cost table, rerank at 1,500 chars uses about 12.904 inputs per query and 6.1 seconds compared to 9,652 and 4.7 seconds for 600 chars. I think this is a fair tradeoff for the obtained results. The interval ultimately supports that the direction matches my hypothesis and the effect on paraphrase queries is potentially real, but indistinguishable from zero on only 30 queries. We cannot, therefore, claim that 1,500 characters is better in general since the interval includes zero. More paraprase queries would solidify the outcome.
 
 ---
 
@@ -392,8 +397,14 @@ Then sort the failures by cause, for example a vocabulary mismatch, near-duplica
 
 | qid | what the best system returned | what was relevant | cause | what you would try |
 |---|---|---|---|---|
+| c08 | bm25: OpenLKA (2501.03287) | "Robust sensor fusion against on-vehicle sensor staleness" (2506.05780) | vocabulary mismatch | rewrite the query or use dense or hybrid |
+| c11 | bm25: "Motion Synthesis with Sparse and Flexible Keyjoint Control" (2503.15557) | "Universal Online Temporal Calibration..." (2501.01788) | vocabulary mismatch | rewrite the query or use dense |
+| h04 | bm25: "Mixture of Horizons in Action Chunking" (2511.19433) | Cosmos World Foundation Model Platform (2501.03575) | filler words | remove question words from query |
+| h05 | bm25: DiWA (2508.03645) | "Multimodal Spatial Language Maps..." (2506.06862) | broad query, narrow gold set | judge more papers for broad queries |
+| h02 | rerank: 2501.01704 (satellite fiducial paper) | 2512.23162 | character limit | show the reranker more characters |
+| h08 | rerank returned 2512.00027 (the VLN survey) | 2508.02917 | character limit | show the reranker more characters |
 
-TODO: add one row for each failure you analyzed, and write two or three sentences on the pattern you see across them.
+
 
 ---
 
@@ -406,7 +417,10 @@ Did the winner change between the shared corpus and yours?
 Why, or why not: what is different about the two collections (document length, vocabulary, identifiers, near-duplicates, how the queries were written), and which of your explanations did you test and which are guesses?
 Say what 20 queries on one side and your gold-set size on the other cannot support.
 
-TODO: write the cross-corpus comparison.
+
+Yes the winner did change between the shared corpus and my own. On the shared practice set, rerank performed the best by a significant margin, distinguishably from the other three. On my corpus, bm25 is best by point estimate but no two pair is actually distinguishable since all intervals include zero.
+One key difference was the query wording overlap. On my corpus, paraphrase queries shared 0.49 of the words with the paper, while the CFR was only 0.11 shared. This is partially due to claudes queries which mostly pulled from the documents and my own which were also mostly derived directly from documents. Document length also varied between the corpuses, with CFR being approximately 300 words and my own being 1400 characters long.
+Since the CFR has 20 queries and my gold-set contains 30, we have a fairly small minimum detectable difference for both (0.19 to 0.41 for CFR and 0.13 to 0.26 for mine). Differences smaller than these are invisible which gives us a small range. Also its harder to see concrete winners with such small query sets. Also rerank and hybrids settings were tuned using the practice data so the performance is biased there. 
 
 ---
 
